@@ -37,8 +37,6 @@ class Game(arcade.Window):
             if ground.center_x < 0:
                 self.grounds.remove(ground)
                 self.grounds.append(Ground(self.w + 132 ,50))
-    
-
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
@@ -53,7 +51,6 @@ class Game(arcade.Window):
             self.dino.bent = False
 
 
-
 class Ground(arcade.Sprite):
     def __init__(self, width, height):
         super().__init__()
@@ -65,8 +62,6 @@ class Ground(arcade.Sprite):
         self.change_y = 0
         self.width = 132
         self.height = 56
-
-
 
 
 class Dino(arcade.AnimatedWalkingSprite):
@@ -84,12 +79,10 @@ class Dino(arcade.AnimatedWalkingSprite):
         self.bent = 0
 
     def show_walking(self, s):
-
         if s % 2 == 0:
             self.texture = arcade.load_texture('img/dino-walk-0.png')
         elif s % 3 == 0:
             self.texture = arcade.load_texture('img/dino-walk-1.png')
-
 
 
 if __name__ == '__main__':
