@@ -1,57 +1,43 @@
-import cv2
+import cv2 
 import mediapipe as mp
-
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands()
-
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_hands = mp.solutions.hands
+from math import hypot
+import numpy as np 
 
 cap = cv2.VideoCapture(0)
 
-with mp_hands.Hands(
-    model_complexity=0,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as hands:
+mpHands = mp.solutions.hands 
+hands = mpHands.Hands()
+mpDraw = mp.solutions.drawing_utils
 
-  while cap.isOpened():
-    success, image = cap.read()
-    if not success:
-      print("Ignoring empty camera frame.")
-      # If loading a video, use 'break' instead of 'continue'.
-      continue
+while True:
+    success,img = cap.read()
+    imgRGB = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    results = hands.process(imgRGB)
 
-    # To improve performance, optionally mark the image as not writeable to pass by reference.
-    image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = hands.process(image)
-    # print("right or left?? ", results.multi_handedness) # for left an right
-    fingers = []
-
-    # Draw the hand annotations on the image.
-    image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    print(results.multi_hand_landmarks)
-    print('________________________________________')
+    lmList = []
     if results.multi_hand_landmarks:
-      for i, hand_landmarks in enumerate(results.multi_hand_landmarks):
-        fingers.append(hand_landmarks)
-        print('+++++++++++++', fingers)
-        for c in range(len(fingers)):
-          print(c)
-          # print(f'{c} ======= ', fingers[c]) # hand position
-          # print('++++++++++++++++++++++++')
-        mp_drawing.draw_landmarks(
-            image,
-            hand_landmarks,
-            mp_hands.HAND_CONNECTIONS,
-            mp_drawing_styles.get_default_hand_landmarks_style(),
-            mp_drawing_styles.get_default_hand_connections_style())
+        for handlandmark in results.multi_hand_landmarks:
+            for id,lm in enumerate(handlandmark.landmark):
+                h,w,_ = img.shape
+                cx,cy = int(lm.x*w),int(lm.y*h)
+                lmList.append([id,cx,cy]) 
+            mpDraw.draw_landmarks(img,handlandmark,mpHands.HAND_CONNECTIONS)
 
-    # Flip the image horizontally for a selfie-view display.
-    cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
-    if cv2.waitKey(5) & 0xFF == 27:
-      break
+    if lmList != []:
+        x1,y1 = lmList[4][1], lmList[4][2]
+        x2,y2 = lmList[8][1], lmList[8][2]
+        x3,y3 = lmList[12][1], lmList[12][2]
+        x4,y4 = lmList[16][1], lmList[16][2]
+        x5,y5 = lmList[20][1], lmList[20][2]
 
-cap.release()
+        length54 = hypot(x5-x4 , y5-y4)
+        length43 = hypot(x4-x3 , y4-y3)
+        length32 = hypot(x3-x2 , y3-y2)
+        length21 = hypot(x2-x1 , y2-y1)
+
+        if length21 < 50 and length32 < 50 and length43 < 50 and length54 < 50:
+            print('***************')
+        
+    cv2.imshow('Image',img)
+    if cv2.waitKey(1) & 0xff == ord('q'):
+        break
