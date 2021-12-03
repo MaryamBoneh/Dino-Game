@@ -2,7 +2,6 @@ import arcade, random
 import cv2 
 import mediapipe as mp
 from math import hypot
-import numpy as np 
 
 
 class Game(arcade.Window):
