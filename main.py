@@ -12,6 +12,7 @@ class Game(arcade.Window):
         arcade.set_background_color(arcade.color.WHITE)
         self.dino = Dino()
         self.grounds = arcade.SpriteList()
+        self.cactuses = arcade.SpriteList()
 
         for i in range(0, self.w + 132, 132):
             ground = Ground(i, 50)
@@ -24,11 +25,13 @@ class Game(arcade.Window):
         for ground in self.grounds:
             ground.draw()
 
+        for cactus in self.cactuses:
+            cactus.draw()
+
         self.dino.draw()
 
     def on_update(self, delta_time: float):
         self.physics_engine.update()
-        self.dino.update_animation()
 
         self.dino.center_x = 200
         self.msec += 0.5
@@ -43,6 +46,11 @@ class Game(arcade.Window):
                 self.grounds.remove(ground)
                 self.grounds.append(Ground(self.w + 132, 50))
 
+        if random.random() < 0.1:
+            self.cactuses.append(Cactus())
+            print('cactuuussss')
+
+
 
 class Ground(arcade.Sprite):
     def __init__(self, width, height):
@@ -56,6 +64,18 @@ class Ground(arcade.Sprite):
         self.change_y = 0
         self.width = 132
         self.height = 56
+
+
+class Cactus(arcade.AnimatedWalkingSprite):
+    def __init__(self):
+        super().__init__()
+        self.picture = random.choice(['img/cactus1.png', 'img/cactus2.png', 'img/cactus3.png'])
+        self.texture = arcade.load_texture(self.picture)
+        self.center_x = 800
+        self.center_y = 100
+        self.change_x = -6
+        self.change_y = 0
+        self.scale = 0.3
 
 
 class Dino(arcade.AnimatedWalkingSprite):
