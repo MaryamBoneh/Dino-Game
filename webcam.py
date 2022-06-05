@@ -4,8 +4,8 @@ from math import hypot
 
 
 cap = cv2.VideoCapture(0)
-cap.set(3, 640)
-cap.set(4, 480)
+cap.set(3, 360)
+cap.set(4, 240)
 
 mpHands = mp.solutions.hands
 hands = mpHands.Hands()
