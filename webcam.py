@@ -41,6 +41,6 @@ def check():
         if length21 < 50 and length32 < 50 and length43 < 50 and length54 < 50:
             return True
 
-    cv2.imshow('Dinnnnnno!', img)
+    cv2.imshow('Dinnnnnno!', cv2.flip(img, 1))
     if cv2.waitKey(1) & 0xff == ord('q'):
         exit()
