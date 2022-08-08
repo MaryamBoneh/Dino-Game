@@ -10,13 +10,15 @@ def check():
     _, img = cap.read()
     img = cv2.flip(img, 1)
     hand = detector.findHands(img, draw=False)
+
     cv2.imshow('Dinnnnnno!', img)
+
     if cv2.waitKey(1) & 0xff == ord('q'):
         exit()
+
     if hand:
         lmlist = hand[0]
         if lmlist:
             fingerup = detector.fingersUp(lmlist)
             if fingerup == [1, 1, 1, 1, 1]:
                 return True
-

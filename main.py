@@ -1,4 +1,4 @@
-import arcade, random, threading
+import arcade, random, time
 import webcam
 
 
@@ -8,18 +8,19 @@ class Game(arcade.Window):
         self.h = 400
         self.msec = 0
         self.gravity = 0.9
+        self.game_over = False
         super().__init__(self.w, self.h, "Dino")
         arcade.set_background_color(arcade.color.WHITE)
         self.dino = Dino()
         self.grounds = arcade.SpriteList()
         self.cactuses = arcade.SpriteList()
+        self.cactus_create_at = time.time()
 
         for i in range(0, self.w + 132, 132):
             ground = Ground(i, 50)
             self.grounds.append(ground)
 
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.dino, self.grounds, self.gravity)
-
 
     def on_draw(self):
         arcade.start_render()
@@ -32,6 +33,7 @@ class Game(arcade.Window):
         self.dino.draw()
 
     def on_update(self, delta_time: float):
+        now = time.time()
         self.physics_engine.update()
 
         self.dino.center_x = 200
@@ -42,13 +44,17 @@ class Game(arcade.Window):
             if self.physics_engine.can_jump():
                 self.dino.change_y = 15
 
-        if random.random() < 0.02:
+        if random.random() < 0.02 and (now - self.cactus_create_at > 3):
             self.cactuses.append(Cactus(self.w))
+            self.cactus_create_at = time.time()
 
         for cactus in self.cactuses:
             cactus.update()
             if cactus.center_x < 0:
                 self.cactuses.remove(cactus)
+
+            if arcade.check_for_collision(self.dino, cactus):
+                self.game_over = True
 
         for ground in self.grounds:
             if ground.center_x < 0:
