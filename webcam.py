@@ -17,6 +17,6 @@ def check():
             if fingerup == [1, 1, 1, 1, 1]:
                 return True
 
-    cv2.imshow('Dinnnnnno!', cv2.flip(img, 1))
+    cv2.imshow('Dinnnnnno!', img)
     if cv2.waitKey(1) & 0xff == ord('q'):
         exit()
