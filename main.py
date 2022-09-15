@@ -1,5 +1,8 @@
 import arcade, random, time
 import webcam
+from Dino import Dino
+from Ground import Ground
+from Cactus import Cactus
 
 
 class Game(arcade.Window):
@@ -60,53 +63,6 @@ class Game(arcade.Window):
             if ground.center_x < 0:
                 self.grounds.remove(ground)
                 self.grounds.append(Ground(self.w + 132, 50))
-
-
-class Ground(arcade.Sprite):
-    def __init__(self, width, height):
-        super().__init__()
-        self.picture = random.choice(['img/ground-0.png', 'img/ground-1.png', 'img/ground-2.png',
-                                     'img/ground-3.png', 'img/ground-4.png', 'img/ground-5.png', 'img/ground-6.png'])
-        self.texture = arcade.load_texture(self.picture)
-        self.center_x = width
-        self.center_y = height
-        self.change_x = -6
-        self.change_y = 0
-        self.width = 132
-        self.height = 56
-
-
-class Cactus(arcade.Sprite):
-    def __init__(self, w):
-        super().__init__()
-        self.picture = random.choice(['img/cactus1.png', 'img/cactus2.png', 'img/cactus3.png'])
-        self.texture = arcade.load_texture(self.picture)
-        self.center_x = w + 30
-        self.center_y = 125
-        self.change_x = -6
-        self.change_y = 0
-        self.scale = 0.3
-
-
-class Dino(arcade.AnimatedWalkingSprite):
-    def __init__(self):
-        super().__init__()
-        self.walk_right_textures = [arcade.load_texture('img/dino-walk-0.png'), arcade.load_texture('img/dino-walk-1.png')]
-        self.walk_down_textures = [arcade.load_texture('img/dino-down-0.png'), arcade.load_texture('img/dino-down-1.png')]
-        self.walk_up_textures = [arcade.load_texture('img/dino-walk-1.png')]
-        self.walk_down_textures = [arcade.load_texture('img/dino-walk-0.png')]
-        self.center_x = 200
-        self.center_y = 220
-        self.change_x = 1
-        self.change_y = -6
-        self.scale = 0.3
-        self.bent = 0
-
-    def show_walking(self, s):
-        if s % 2 == 0:
-            self.texture = arcade.load_texture('img/dino-walk-0.png')
-        else:
-            self.texture = arcade.load_texture('img/dino-walk-1.png')
 
 
 if __name__ == '__main__':
