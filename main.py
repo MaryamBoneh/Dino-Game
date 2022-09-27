@@ -26,12 +26,19 @@ class Game(arcade.Window):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.dino, self.grounds, self.gravity)
 
     def on_draw(self):
-        arcade.start_render()
-        for ground in self.grounds:
-            ground.draw()
 
-        for cactus in self.cactuses:
-            cactus.draw()
+        arcade.start_render()
+
+        if self.game_over:
+            self.dino.opps()
+            arcade.draw_text('Game Over', 150, self.h//2, arcade.color.RED, 60, width=600, font_name='Kenney Mini Square', align='center')
+            arcade.draw_text('please press "ENTER" key to reset', 150, self.h//3, arcade.color.DARK_RED, 24, width=600, font_name='Kenney Mini Square', align='center')
+        else:
+            for ground in self.grounds:
+                ground.draw()
+
+            for cactus in self.cactuses:
+                cactus.draw()
 
         self.dino.draw()
 
@@ -41,29 +48,34 @@ class Game(arcade.Window):
 
         self.dino.center_x = 200
         self.msec += 1
-        self.dino.show_walking(self.msec)
 
-        if webcam.check():
-            if self.physics_engine.can_jump():
-                self.dino.change_y = 15
+        if not self.game_over:
+            self.dino.show_walking(self.msec)
+            if webcam.check():
+                if self.physics_engine.can_jump():
+                    self.dino.change_y = 15
 
-        if random.random() < 0.02 and (now - self.cactus_create_at > 3):
-            self.cactuses.append(Cactus(self.w))
-            self.cactus_create_at = time.time()
+            if random.random() < 0.02 and (now - self.cactus_create_at > 3):
+                self.cactuses.append(Cactus(self.w))
+                self.cactus_create_at = time.time()
 
-        for cactus in self.cactuses:
-            cactus.update()
-            if cactus.center_x < 0:
-                self.cactuses.remove(cactus)
+            for cactus in self.cactuses:
+                cactus.update()
+                if cactus.center_x < 0:
+                    self.cactuses.remove(cactus)
 
-            if arcade.check_for_collision(self.dino, cactus):
-                self.game_over = True
+                if arcade.check_for_collision(self.dino, cactus):
+                    self.game_over = True
 
-        for ground in self.grounds:
-            if ground.center_x < 0:
-                self.grounds.remove(ground)
-                self.grounds.append(Ground(self.w + 132, 50))
+            for ground in self.grounds:
+                if ground.center_x < 0:
+                    self.grounds.remove(ground)
+                    self.grounds.append(Ground(self.w + 132, 50))
 
+
+    def on_key_press(self, key, modifiers):
+        if key==arcade.key.ENTER and self.game_over:
+            self.game_over = False
 
 if __name__ == '__main__':
     game = Game()
