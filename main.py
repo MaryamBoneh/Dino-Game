@@ -3,6 +3,7 @@ import webcam
 from Dino import Dino
 from Ground import Ground
 from Cactus import Cactus
+from Dragon import Dragon
 
 
 class Game(arcade.Window):
@@ -17,7 +18,9 @@ class Game(arcade.Window):
         self.dino = Dino()
         self.grounds = arcade.SpriteList()
         self.cactuses = arcade.SpriteList()
+        self.dragons = arcade.SpriteList()
         self.cactus_create_at = time.time()
+        self.dragon_create_at = time.time()
 
         for i in range(0, self.w + 132, 132):
             ground = Ground(i, 50)
@@ -40,6 +43,9 @@ class Game(arcade.Window):
             for cactus in self.cactuses:
                 cactus.draw()
 
+            for dragon in self.dragons:
+                dragon.draw()
+
         self.dino.draw()
 
     def on_update(self, delta_time: float):
@@ -55,7 +61,7 @@ class Game(arcade.Window):
                 if self.physics_engine.can_jump():
                     self.dino.change_y = 15
 
-            if random.random() < 0.02 and (now - self.cactus_create_at > 3):
+            if random.random() < 0.025 and (now - self.cactus_create_at > 3):
                 self.cactuses.append(Cactus(self.w))
                 self.cactus_create_at = time.time()
 
@@ -66,6 +72,17 @@ class Game(arcade.Window):
 
                 if arcade.check_for_collision(self.dino, cactus):
                     self.game_over = True
+            
+            if self.msec > 300:
+                if random.random() < 0.025 and (now - self.dragon_create_at > 3):
+                    self.dragons.append(Dragon(self.w))
+                    self.dragon_create_at = time.time()
+
+                for dragon in self.dragons:
+                    dragon.flapping(self.msec)
+                    dragon.update()
+                    if dragon.center_x < 0:
+                        self.dragons.remove(dragon)
 
             for ground in self.grounds:
                 if ground.center_x < 0:
